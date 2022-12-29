@@ -1,0 +1,26 @@
+module NIEBE
+  VERSION: String
+  TOKEN_ENDPOINT: String
+
+  class Client
+    @access_token: String
+    @client: Hash[String, String]
+    @client_id: String
+    @client_secret: String
+    @connection: Faraday::Connection
+    @refresh_token: String
+    @tokens: Hash[String, String]
+
+    @verbose: bool
+
+    def systems: -> Hash[String, untyped]
+
+    private
+
+    def connection: -> Faraday::Connection
+
+    def load_json_configuration: -> nil
+
+    def refresh_token: -> String
+  end
+end

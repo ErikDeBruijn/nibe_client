@@ -1,11 +1,13 @@
 require "json"
 require "faraday"
 require "faraday_middleware"
-require "active_support/core_ext/hash"
+require "active_support/all"
 
 require_relative "nibe_uplink/version"
 require_relative "nibe_uplink/client"
+require_relative "nibe_uplink/credentials"
 
 module NibeUplink
   class TokenRefreshError < StandardError; end
+  class TokenFileError < StandardError; end
 end

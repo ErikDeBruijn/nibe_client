@@ -1,9 +1,9 @@
-# NiebeClient
+# NIBE Client
 
 ## Introduction
 
 NIBE is a Swedish company that makes heat pumps. They have a service called NIBEuplink.
-NIBE heat pumps have NIBEuplink. This client accesses the NIBE uplink API (see [this](https://api.nibeuplink.com/docs/v1) this documentation from NIEBE).
+NIBE heat pumps have NIBEuplink. This client accesses the NIBE uplink API (see [this](https://api.nibeuplink.com/docs/v1) this documentation from NIBE).
 
 It uses the official and sanctioned cloud API provided by NIEBE.
 
@@ -13,11 +13,11 @@ This gem was provided by [Thermogen BV](https://www.thermogen.nl/) and [Stekker.
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add niebe_client
+    $ bundle add nibe_uplink-client
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install niebe_client
+    $ gem install nibe_uplink-client
 
 ## Configuration
 
@@ -54,9 +54,9 @@ Create a file called `.nibe-client.json` with the following contents:
 Run `ruby nibe-fetch.rb` to get a list of your systems. Note the system id and use it below.
 
 ```ruby
-require 'niebe_client'
+require 'nibe'
 
-client = NIEBE::Client.new
+client = NIBE::Client.new
 client.systems
 ```
 

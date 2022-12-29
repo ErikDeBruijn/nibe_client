@@ -19,7 +19,7 @@ module NIEBE
 
     def connection: -> Faraday::Connection
 
-    def load_json_configuration: -> nil
+    def load_token: -> nil
 
     def refresh_token: -> String
   end

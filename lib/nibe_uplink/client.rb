@@ -1,26 +1,31 @@
 # frozen_string_literal: true
 
-require_relative "version"
-require "json"
-require "faraday"
-require "faraday_middleware"
-require "active_support/core_ext/hash"
-
-module NIEBE
-  class Error < StandardError; end
-
-  TOKEN_ENDPOINT = "/oauth/token"
-
+module NibeUplink
   class Client
-    def initialize(client_id: nil, client_secret: nil, verbose: false)
+    TOKEN_ENDPOINT = "/oauth/token"
+
+    attr_reader :token_file
+
+    def initialize(client_id: nil, client_secret: nil, access_token: nil, refresh_token: nil, verbose: false, token_file: nil)
       @client_id = client_id
       @client_secret = client_secret
+      @access_token = access_token
+      @refresh_token = refresh_token
       @verbose = verbose
+      @token_file = token_file
+      @token_was_updated = false
 
-      load_json_configuration
+      load_token(@token_file) if @token_file
     end
 
     def systems = perform_get("/api/v1/systems").body
+
+    def token_file_data
+      return nil if @token_was_updated == false
+
+      JSON.parse(File.read(@token_file))
+          .merge("access_token" => @access_token, "refresh_token" => @refresh_token).to_json
+    end
 
     private
 
@@ -28,7 +33,7 @@ module NIEBE
       retries ||= 0
       connection.get(url)
     rescue Faraday::UnauthorizedError => e
-      raise e if (retries += 1) > 3
+      raise TokenRefreshError, "Couldn't refresh token, retries exhausted #{retries}: #{e}" if (retries += 1) >= 2
 
       refresh_access_token
       retry
@@ -39,8 +44,6 @@ module NIEBE
         conn.adapter Faraday.default_adapter
         conn.request :json
         conn.request :oauth2, @access_token, token_type: "bearer"
-        conn.response :json, content_type: /\bjson$/
-        conn.response :follow_redirects
         conn.request :retry,
                      {
                        max: 2,
@@ -49,13 +52,14 @@ module NIEBE
                        retry_statuses: [408, 409, 500, 501, 502, 503],
                        methods: %i[get put post head options]
                      }
+        conn.response :json
+        conn.response :follow_redirects
         conn.response :raise_error
       end
     end
 
-    def load_json_configuration
-      token_file_name = "#{Dir.pwd}/.nibe-tokens.json"
-      @tokens = JSON.parse(File.read(token_file_name))
+    def load_token(file_name = "#{Dir.pwd}/.nibe-tokens.json")
+      @tokens = JSON.parse(File.read(file_name))
 
       @access_token = @tokens["access_token"]
       @refresh_token = @tokens["refresh_token"]
@@ -66,18 +70,16 @@ module NIEBE
         grant_type: "refresh_token",
         client_id: @client_id,
         client_secret: @client_secret,
-        refresh_token: @refresh_token,
+        refresh_token: @refresh_token
       }.to_query
-      result = connection.post(TOKEN_ENDPOINT, query, { "Content-Type" => "application/x-www-form-urlencoded" })
+      body = connection.post(TOKEN_ENDPOINT, query, { "Content-Type" => "application/x-www-form-urlencoded" }).body
       @connection = nil
 
-      @access_token = result.body["access_token"]
-      @refresh_token = result.body["refresh_token"]
-    end
+      raise TokenRefreshError, "Couldn't refresh the token." if body["access_token"].nil?
 
-    def refresh_token
-      @tokens["refresh_token"]
+      @access_token = body["access_token"]
+      @refresh_token = body["refresh_token"]
+      @token_was_updated = true
     end
-
   end
 end

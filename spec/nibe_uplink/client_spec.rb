@@ -117,8 +117,8 @@ describe NibeUplink::Client do
         ).to_return(status: 200, body: expected_token, headers: { "Content-Type" => "application/json" })
 
       redirect_uri = "http://127.0.0.1:8000/oauth/callback"
-      niebe_client = described_class.new(verbose: true, client_id: client_id, client_secret: client_secret)
-      credentials = niebe_client.get_credentials(code: "1234", state: "abcd", redirect_uri: redirect_uri)
+      nibe_client = described_class.new(verbose: true, client_id: client_id, client_secret: client_secret)
+      credentials = nibe_client.get_credentials(code: "1234", state: "abcd", redirect_uri: redirect_uri)
 
       expect(credentials).to have_attributes(access_token: "access-token-1234", refresh_token: "refresh-token-1234")
     end
@@ -129,18 +129,18 @@ describe NibeUplink::Client do
       WebMock.allow_net_connect!
 
       redirect_uri = "http://127.0.0.1:8000/oauth/callback"
-      niebe_client = described_class.new(verbose: true, client_id: client_id, client_secret: client_secret)
+      nibe_client = described_class.new(verbose: true, client_id: client_id, client_secret: client_secret)
 
-      niebe_client_authorize_url = niebe_client.authorize_url(redirect_uri: redirect_uri)
-      puts "Go to this url and authorize the app: #{niebe_client_authorize_url}"
-      `open '#{niebe_client_authorize_url}'`
+      nibe_client_authorize_url = nibe_client.authorize_url(redirect_uri: redirect_uri)
+      puts "Go to this url and authorize the app: #{nibe_client_authorize_url}"
+      `open '#{nibe_client_authorize_url}'`
 
       server = WEBrick::HTTPServer.new(Port: 8000)
 
       server.mount_proc("/") do |req, res|
         next unless req.path == "/oauth/callback"
 
-        credentials = niebe_client.get_credentials(
+        credentials = nibe_client.get_credentials(
           code: req.query["code"],
           state: req.query["state"],
           redirect_uri: redirect_uri

@@ -42,8 +42,8 @@ Run `./bin/authorize.rb` to get credentials. Follow the instructions on the term
 Credentials should be written to `.nibe-credentials.json`.
 
 ## Usage
-Run `./bin/nibe-fetch.rb` to get a list of your systems and see system details.
-
+Run `./bin/console` to authorize and explore how to get a list of your systems and see system details.
+Here you can type `help` and explore the library.
 See the `bin` directory for more examples.
 
 ## Development

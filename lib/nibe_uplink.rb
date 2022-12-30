@@ -12,3 +12,5 @@ module NibeUplink
   class TokenRefreshError < StandardError; end
   class TokenFileError < StandardError; end
 end
+
+Time.zone_default = Time.find_zone!("UTC") if Time.zone.nil?

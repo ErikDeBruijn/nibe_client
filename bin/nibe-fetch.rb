@@ -9,7 +9,7 @@ def update_token_file(client)
   File.write(client.token_file, token_file_data)
 end
 
-token_file = "#{File.dirname(File.dirname(__FILE__))}/.nibe-credentials.json"
+token_file = "#{BASE_PATH}/.nibe-credentials.json"
 client_id, client_secret = get_client
 nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id, client_secret: client_secret)
 

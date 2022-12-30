@@ -1,15 +1,39 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require_relative "../lib/include.rb"
 require "bundler/setup"
-require "nibe_uplink"
-
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
-
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
-
 require "irb"
+
+puts "Welcome to the NibeUplink::Client console!"
+puts "Type `exit` to exit the console."
+puts "Type `authorize` to start the authorization process."
+puts "Type `help` to get started"
+
+def help
+  puts "To instantiate a client, do the following:"
+  puts "$ client_id, client_secret = get_client"
+  puts "$ nibe_client = NibeUplink::Client.new(verbose: true, client_id: client_id, client_secret: client_secret)"
+  puts "$ nibe_client.credentials = NibeUplink::Credentials.load_from_file(\"#{BASE_PATH}/.nibe-credentials.json\")"
+  puts "To get a list of systems, do the following:"
+  puts "$ systems = nibe_client.systems"
+end
+
+def authorize
+  client_id, client_secret = get_client
+  client_id, client_secret = ask_for_client_details if client_id.nil? || client_secret.nil?
+
+  nibe_client = NibeUplink::Client.new(verbose: true, client_id: client_id, client_secret: client_secret)
+  nibe_client_authorize_url = nibe_client.authorize_url(redirect_uri: redirect_uri)
+
+  puts "==========================================="
+  puts "=> Go to this url and authorize the app: #{nibe_client_authorize_url}"
+  puts "==========================================="
+
+  `open '#{nibe_client_authorize_url}'`
+
+  oauth2_authorize(nibe_client)
+end
+
 IRB.start(__FILE__)
+

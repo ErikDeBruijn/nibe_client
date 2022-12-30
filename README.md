@@ -42,9 +42,33 @@ Run `./bin/authorize.rb` to get credentials. Follow the instructions on the term
 Credentials should be written to `.nibe-credentials.json`.
 
 ## Usage
+### Interactive console
 Run `./bin/console` to authorize and explore how to get a list of your systems and see system details.
 Here you can type `help` and explore the library.
 See the `bin` directory for more examples.
+
+### CLI tool
+Run `./bin/nibe-cli --help` to see the available commands.
+
+If you run `nibe_uplink-client/bin/nibe-cli -s 1234 --yaml`, it will output:
+```yaml
+---
+addition.electrical_addition_power: 2.5 kW
+addition.time_factor: 729.4 h
+heating.degree_minutes: "-1005.0 DM"
+price_of_electricity.price_of_electricity: 32.0 öre/kWh
+compressor.number_of_starts: '169.0 '
+compressor.total_operating_time: 1260.0 h
+compressor.of_which_hot_water: 138.0 h
+compressor.current_compr_frequency: 118.0 Hz
+brine_pump.brine_in: 2.6 °C
+brine_pump.brine_out: "-5.6 °C"
+brine_pump.brine_pump_speed: 100.0 %
+heating_medium_pump.heat_medium_flow: 50.0 °C
+heating_medium_pump.return_temp: 39.7 °C
+heating_medium_pump.pump_speed_heating_medium: 30.0 %
+```
+The YAML output is for maximum readability, but `--json` is also available to get a more structured output.
 
 ## Development
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/include.rb"
+require 'optparse'
+require 'ostruct'
+options = OpenStruct.new(json: false, output: :yaml)
+
+
+def update_token_file(client)
+  token_file_data = client.token_file_data
+  return unless token_file_data
+
+  File.write(client.token_file, token_file_data)
+end
+
+token_file = "#{BASE_PATH}/.nibe-credentials.json"
+client_id, client_secret = get_client
+nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id, client_secret: client_secret)
+
+nibe_client.credentials = NibeUplink::Credentials.load_from_file(token_file)
+systems = nibe_client.systems
+update_token_file(nibe_client)
+
+op = OptionParser.new do |opt|
+  opt.on('-s', '--system FIRSTNAME', 'Select a system by SystemID') do |o|
+    raise "SystemID #{o} isn't found in account. Options: #{systems.keys.join ", "}" if systems.keys.exclude?(o.to_i)
+
+    options[:system_id] = o
+  end
+  opt.on('-j', '--json', 'Output JSON') { |o| options[:output] = :json }
+  opt.on('-y', '--yaml', 'Output YAML (default)') { |o| options[:output] = :yaml }
+  opt.on('-l', '--list', 'List all systems') do
+    puts "Getting data for #{systems.count} systems:"
+    systems.each do |(system_id, system)|
+      puts "System name: #{system.name} SystemID: #{system_id}"
+    end
+    exit
+  end
+end
+op.parse!
+
+puts op.help if options[:system_id].nil?
+
+if options[:system_id]
+  system = systems[options[:system_id].to_i]
+  system_status = system.get_status
+  if options[:output] == :yaml
+    puts system_status.transform_values { |v| "#{v[:value]} #{v[:unit]}"}.to_yaml
+  else
+    puts JSON.pretty_generate(system_status.transform_values { |v| {val: v[:value], unit: v[:unit]}})
+  end
+end

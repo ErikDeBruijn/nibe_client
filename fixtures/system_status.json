@@ -1,0 +1,290 @@
+[
+  {
+    "image": {
+      "name": "Heating",
+      "sizes": [
+        {
+          "width": 35,
+          "height": 35,
+          "url": "/Content/Icons/Emmy/Heating_Tiny.png"
+        },
+        {
+          "width": 50,
+          "height": 50,
+          "url": "/Content/Icons/Emmy/Heating_Small.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "url": "/Content/Icons/Emmy/Heating_Medium.png"
+        },
+        {
+          "width": 150,
+          "height": 150,
+          "url": "/Content/Icons/Emmy/Heating_Large.png"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "url": "/Content/Icons/Emmy/Heating_256x256.png"
+        }
+      ]
+    },
+    "inlineText": "",
+    "title": "Heating",
+    "parameters": [
+      {
+        "parameterId": 43005,
+        "name": "43005",
+        "title": "degree minutes",
+        "designation": "",
+        "unit": "DM",
+        "displayValue": "-378DM",
+        "rawValue": -3782
+      }
+    ]
+  },
+  {
+    "image": {
+      "name": "Plug_orange",
+      "sizes": [
+        {
+          "width": 35,
+          "height": 35,
+          "url": "/Content/Icons/Emmy/Plug_orange_Tiny.png"
+        },
+        {
+          "width": 50,
+          "height": 50,
+          "url": "/Content/Icons/Emmy/Plug_orange_Small.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "url": "/Content/Icons/Emmy/Plug_orange_Medium.png"
+        },
+        {
+          "width": 150,
+          "height": 150,
+          "url": "/Content/Icons/Emmy/Plug_orange_Large.png"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "url": "/Content/Icons/Emmy/Plug_orange_256x256.png"
+        }
+      ]
+    },
+    "inlineText": "",
+    "title": "Price Of Electricity",
+    "parameters": [
+      {
+        "parameterId": 10069,
+        "name": "10069",
+        "title": "price of electricity",
+        "designation": "SE4",
+        "unit": "öre/kWh",
+        "displayValue": "5öre/kWh",
+        "rawValue": 5675
+      }
+    ]
+  },
+  {
+    "image": {
+      "name": "Compressor",
+      "sizes": [
+        {
+          "width": 35,
+          "height": 35,
+          "url": "/Content/Icons/Emmy/Compressor_Tiny.png"
+        },
+        {
+          "width": 50,
+          "height": 50,
+          "url": "/Content/Icons/Emmy/Compressor_Small.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "url": "/Content/Icons/Emmy/Compressor_Medium.png"
+        },
+        {
+          "width": 150,
+          "height": 150,
+          "url": "/Content/Icons/Emmy/Compressor_Large.png"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "url": "/Content/Icons/Emmy/Compressor_256x256.png"
+        }
+      ]
+    },
+    "inlineText": "",
+    "title": "Compressor",
+    "parameters": [
+      {
+        "parameterId": 43416,
+        "name": "43416",
+        "title": "number of starts:",
+        "designation": "EB100-EP14",
+        "unit": "",
+        "displayValue": "166",
+        "rawValue": 166
+      },
+      {
+        "parameterId": 43420,
+        "name": "43420",
+        "title": "total operating time:",
+        "designation": "EB100-EP14",
+        "unit": "h",
+        "displayValue": "1248h",
+        "rawValue": 1248
+      },
+      {
+        "parameterId": 43424,
+        "name": "43424",
+        "title": "- of which hot water:",
+        "designation": "EB100-EP14",
+        "unit": "h",
+        "displayValue": "134h",
+        "rawValue": 134
+      },
+      {
+        "parameterId": 43136,
+        "name": "43136",
+        "title": "current compr. frequency",
+        "designation": "",
+        "unit": "Hz",
+        "displayValue": "104Hz",
+        "rawValue": 1039
+      }
+    ]
+  },
+  {
+    "image": {
+      "name": "Brine",
+      "sizes": [
+        {
+          "width": 35,
+          "height": 35,
+          "url": "/Content/Icons/Emmy/Brine_Tiny.png"
+        },
+        {
+          "width": 50,
+          "height": 50,
+          "url": "/Content/Icons/Emmy/Brine_Small.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "url": "/Content/Icons/Emmy/Brine_Medium.png"
+        },
+        {
+          "width": 150,
+          "height": 150,
+          "url": "/Content/Icons/Emmy/Brine_Large.png"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "url": "/Content/Icons/Emmy/Brine_256x256.png"
+        }
+      ]
+    },
+    "inlineText": "",
+    "title": "Brine Pump",
+    "parameters": [
+      {
+        "parameterId": 40015,
+        "name": "40015",
+        "title": "brine in",
+        "designation": "EB100-EP14-BT10",
+        "unit": "°C",
+        "displayValue": "0.6°C",
+        "rawValue": 6
+      },
+      {
+        "parameterId": 40016,
+        "name": "40016",
+        "title": "brine out",
+        "designation": "EB100-EP14-BT11",
+        "unit": "°C",
+        "displayValue": "-9.5°C",
+        "rawValue": -95
+      },
+      {
+        "parameterId": 43439,
+        "name": "43439",
+        "title": "brine pump speed",
+        "designation": "EP14-GP2",
+        "unit": "%",
+        "displayValue": "100%",
+        "rawValue": 100
+      }
+    ]
+  },
+  {
+    "image": {
+      "name": "Supply",
+      "sizes": [
+        {
+          "width": 35,
+          "height": 35,
+          "url": "/Content/Icons/Emmy/Supply_Tiny.png"
+        },
+        {
+          "width": 50,
+          "height": 50,
+          "url": "/Content/Icons/Emmy/Supply_Small.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "url": "/Content/Icons/Emmy/Supply_Medium.png"
+        },
+        {
+          "width": 150,
+          "height": 150,
+          "url": "/Content/Icons/Emmy/Supply_Large.png"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "url": "/Content/Icons/Emmy/Supply_256x256.png"
+        }
+      ]
+    },
+    "inlineText": "",
+    "title": "Heating Medium Pump",
+    "parameters": [
+      {
+        "parameterId": 40008,
+        "name": null,
+        "title": "heat medium flow",
+        "designation": "BT2",
+        "unit": "°C",
+        "displayValue": "43.0°C",
+        "rawValue": 430
+      },
+      {
+        "parameterId": 40012,
+        "name": null,
+        "title": "return temp.",
+        "designation": "EB100-EP14-BT3",
+        "unit": "°C",
+        "displayValue": "36.4°C",
+        "rawValue": 364
+      },
+      {
+        "parameterId": 43437,
+        "name": "43437",
+        "title": "pump speed heating medium",
+        "designation": "EP14",
+        "unit": "%",
+        "displayValue": "23%",
+        "rawValue": 23
+      }
+    ]
+  }
+]

@@ -18,7 +18,15 @@ module NibeUplink
       @token_was_updated = false
     end
 
-    def systems = perform_get("/api/v1/systems").body
+    def systems
+      result = perform_get("/api/v1/systems").body
+      result['objects'].map { |system| [system["systemId"], System.new(self, system)] }.to_h
+    end
+
+    def system_status(system_id)
+      result = perform_get("/api/v1/systems/#{system_id}/status/system").body
+      result
+    end
 
     def token_file_data
       return nil if @token_was_updated == false
@@ -78,6 +86,7 @@ module NibeUplink
       @connection ||= Faraday.new(url: "https://api.nibeuplink.com") do |conn|
         conn.adapter Faraday.default_adapter
         conn.request :json
+
         conn.request :oauth2, @credentials.access_token, token_type: "bearer"
         conn.request :retry,
                      {

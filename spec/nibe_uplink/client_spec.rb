@@ -10,10 +10,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Accept" => "*/*",
-          "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
           "Authorization" => "Bearer expired-token-1234",
-          "User-Agent" => "Faraday v1.10.2"
         }
       ).to_return(status: 401, body: "", headers: {})
 
@@ -31,10 +28,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Accept" => "*/*",
-          "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
           "Authorization" => "Bearer new-access-token-1234",
-          "User-Agent" => "Faraday v1.10.2"
         }
       ).to_return(status: 200, body: { used_new_token: "true" }.to_json, headers: {})
     expect(client.systems).to eq({ "used_new_token" => "true" })
@@ -46,10 +40,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Accept" => "*/*",
-          "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
           "Authorization" => "Bearer access_token-1234",
-          "User-Agent" => "Faraday v1.10.2"
         }
       ).to_return(status: 200, body: { test: true }.to_json, headers: {})
     expect(client.systems["test"]).to be_truthy
@@ -70,24 +61,17 @@ describe NibeUplink::Client do
 
     stub_request(:post, "https://api.nibeuplink.com/oauth/token")
       .with(
-        body: { "client_id" => "client-1234", "client_secret" => "client-secret-1234", "grant_type" => "refresh_token", "refresh_token" => "refresh_token-1234" },
-        headers: {
-          "Accept" => "*/*",
-          "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-          "Content-Type" => "application/x-www-form-urlencoded",
-          "User-Agent" => "Faraday v1.10.2"
-        }
+        body: { "client_id" => "client-1234",
+                "client_secret" => "client-secret-1234",
+                "grant_type" => "refresh_token",
+                "refresh_token" => "refresh_token-1234" },
+        headers: { "Content-Type" => "application/x-www-form-urlencoded" }
       ).to_return(status: 200, body: { access_token: "new-access-token-1234",
                                        refresh_token: "new-refresh-token-1234" }.to_json, headers: {})
 
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
-        headers: {
-          "Accept" => "*/*",
-          "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-          "Authorization" => "Bearer new-access-token-1234",
-          "User-Agent" => "Faraday v1.10.2"
-        }
+        headers: { "Authorization" => "Bearer new-access-token-1234" }
       ).to_return(status: 200, body: "", headers: {})
 
     expect(client.token_file_data).to be_nil
@@ -128,10 +112,7 @@ describe NibeUplink::Client do
                   "redirect_uri" => "http://127.0.0.1:8000/oauth/callback",
                   "scopes" => "READSYSTEM" },
           headers: {
-            "Accept" => "*/*",
-            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
             "Content-Type" => "application/x-www-form-urlencoded",
-            "User-Agent" => "Faraday v1.10.2"
           }
         ).to_return(status: 200, body: expected_token, headers: { "Content-Type" => "application/json" })
 
@@ -171,6 +152,39 @@ describe NibeUplink::Client do
 
       trap("INT") { server.shutdown }
       server.start
+    end
+  end
+
+  describe "#systems" do
+    it "returns a list of Systems" do
+      fixture = File.read("fixtures/systems.json")
+
+      stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
+        .to_return(status: 200, body: fixture, headers: {})
+
+      client = described_class.new(verbose: true)
+      systems = client.systems
+      pp systems
+      expect(systems.keys).to eq([169_087])
+      expect(systems.values.first.product_name).to eq("NIBE F1255")
+      expect(systems.values.first.name).to eq("F1255-6 R PC")
+      expect(systems.values.first.name).to eq("F1255-6 R PC")
+    end
+  end
+
+  describe "#system" do
+    it "returns a System" do
+      fixture = File.read("fixtures/system.json")
+
+      stub_request(:get, "https://api.nibeuplink.com/api/v1/systems/169087")
+        .to_return(status: 200, body: fixture, headers: {})
+
+      client = described_class.new(verbose: true)
+      system = client.system(169_087)
+      pp system
+      # expect(system.product_name).to eq("NIBE F1255")
+      # expect(system.name).to eq("F1255-6 R PC")
+      # expect(system.name).to eq("F1255-6 R PC")
     end
   end
 

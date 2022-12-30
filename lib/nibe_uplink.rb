@@ -6,6 +6,7 @@ require "active_support/all"
 require_relative "nibe_uplink/version"
 require_relative "nibe_uplink/client"
 require_relative "nibe_uplink/credentials"
+require_relative "nibe_uplink/system"
 
 module NibeUplink
   class TokenRefreshError < StandardError; end

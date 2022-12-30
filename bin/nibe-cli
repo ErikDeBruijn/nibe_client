@@ -29,6 +29,7 @@ op = OptionParser.new do |opt|
   end
   opt.on('-j', '--json', 'Output JSON') { |o| options[:output] = :json }
   opt.on('-y', '--yaml', 'Output YAML (default)') { |o| options[:output] = :yaml }
+  opt.on('-p', '--prom', 'Output Prometheus format') { |o| options[:output] = :prom }
   opt.on('-l', '--list', 'List all systems') do
     puts "Getting data for #{systems.count} systems:"
     systems.each do |(system_id, system)|
@@ -44,9 +45,15 @@ puts op.help if options[:system_id].nil?
 if options[:system_id]
   system = systems[options[:system_id].to_i]
   system_status = system.get_status
-  if options[:output] == :yaml
+  case options[:output]
+  when :yaml
     puts system_status.transform_values { |v| "#{v[:value]} #{v[:unit]}"}.to_yaml
-  else
+  when :json
     puts JSON.pretty_generate(system_status.transform_values { |v| {val: v[:value], unit: v[:unit]}})
+  when :prom
+    puts "# System name: #{system.name} ID: #{options[:system_id]}"
+    system_status.each do |(k, v)|
+      puts "#{k.tr(".","_")}\{instance=\"#{options[:system_id].to_i}\",unit=\"#{v[:unit]}\"\} #{v[:value].to_f}"
+    end
   end
 end

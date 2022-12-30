@@ -18,7 +18,7 @@ module NibeUplink
           # heading_name = heading["title"].tr(".: -", "  _ ").strip.gsub(" ", "")
           heading_name = heading["title"].downcase.gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
           param_name = parameter["title"].gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
-          entries["#{heading_name}.#{param_name}"] = { value: parameter["displayValue"].to_f, unit: unit }
+          entries["#{heading_name}.#{param_name}"] = { value: parameter["displayValue"].to_f, unit: unit, designation: parameter["designation"] }
         end
       end
       entries

@@ -5,7 +5,6 @@ require 'optparse'
 require 'ostruct'
 options = OpenStruct.new(json: false, output: :yaml)
 
-
 def update_token_file(client)
   token_file_data = client.token_file_data
   return unless token_file_data
@@ -13,26 +12,34 @@ def update_token_file(client)
   File.write(client.token_file, token_file_data)
 end
 
-token_file = "#{BASE_PATH}/.nibe-credentials.json"
-client_id, client_secret = get_client
-nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id, client_secret: client_secret)
+def get_niebe_client(token_file = "#{BASE_PATH}/.nibe-credentials.json")
+  client_id, client_secret = get_client
+  nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id, client_secret: client_secret)
+  nibe_client.credentials = NibeUplink::Credentials.load_from_file(token_file)
+  nibe_client
+end
 
-nibe_client.credentials = NibeUplink::Credentials.load_from_file(token_file)
-systems = nibe_client.systems
-update_token_file(nibe_client)
+nibe_client = get_niebe_client
+systems = nil
 
 op = OptionParser.new do |opt|
-  opt.on('-s', '--system FIRSTNAME', 'Select a system by SystemID') do |o|
-    raise "SystemID #{o} isn't found in account. Options: #{systems.keys.join ", "}" if systems.keys.exclude?(o.to_i)
+  opt.on('-s', '--system SYSTEMID', 'Select a system by SystemID') do |o|
+    systems = nibe_client.systems
+    if systems.keys.exclude?(o.to_i)
+      # to stderr:
+      warn "SystemID #{o} isn't found in account. Options: #{systems.keys.join ", "}"
+      exit(1)
+    end
 
     options[:system_id] = o
   end
-  opt.on('-j', '--json', 'Output JSON') { |o| options[:output] = :json }
-  opt.on('-y', '--yaml', 'Output YAML (default)') { |o| options[:output] = :yaml }
-  opt.on('-p', '--prom', 'Output Prometheus format') { |o| options[:output] = :prom }
+  opt.on('-j', '--json', 'Output JSON') { options[:output] = :json }
+  opt.on('-y', '--yaml', 'Output YAML (default)') { options[:output] = :yaml }
+  opt.on('-p', '--prom', 'Output Prometheus format') { options[:output] = :prom }
+  opt.on('--instance-name NAME', 'Instance name in Prometheus output') { options[:prom_instance_name] = _1 }
   opt.on('-l', '--list', 'List all systems') do
     puts "Getting data for #{systems.count} systems:"
-    systems.each do |(system_id, system)|
+    nibe_client.systems.each do |(system_id, system)|
       puts "System name: #{system.name} SystemID: #{system_id}"
     end
     exit
@@ -47,13 +54,18 @@ if options[:system_id]
   system_status = system.get_status
   case options[:output]
   when :yaml
-    puts system_status.transform_values { |v| "#{v[:value]} #{v[:unit]}"}.to_yaml
+    puts system_status.transform_values { |v| "#{v[:value]} #{v[:unit]}" }.to_yaml
   when :json
-    puts JSON.pretty_generate(system_status.transform_values { |v| {val: v[:value], unit: v[:unit]}})
+    puts JSON.pretty_generate(system_status.transform_values { |v| { val: v[:value], unit: v[:unit] } })
   when :prom
-    puts "# System name: #{system.name} ID: #{options[:system_id]}"
+    puts "# System name: #{system.name} SystemID: #{options[:system_id]} Serial number: #{system.serial_number}"
     system_status.each do |(k, v)|
-      puts "#{k.tr(".","_")}\{instance=\"#{options[:system_id].to_i}\",unit=\"#{v[:unit]}\"\} #{v[:value].to_f}"
+      labels = []
+      labels << "instance_name=\"#{options[:prom_instance_name]}\"" if options[:prom_instance_name]
+      labels << "instance=\"#{options[:system_id].to_i}\""
+      labels << "designation=\"#{v[:designation]}\""
+      labels << "unit=\"#{v[:unit]}\""
+      puts "#{k.tr(".", "_")}{#{labels.join ","}} #{v[:value].to_f}"
     end
   end
 end

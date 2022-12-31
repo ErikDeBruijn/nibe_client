@@ -52,6 +52,10 @@ puts op.help if options[:system_id].nil?
 if options[:system_id]
   system = systems[options[:system_id].to_i]
   system_status = system.get_status
+  categories = %w[STATUS CPR_INFO_EP14 SYSTEM_1 PASSIVE_COOLING_INTERNAL ADDITION SMART_PRICE_ADAPTION AUX_IN_OUT SYSTEM_INFO]
+  categories.each do |category|
+    system_status.merge!(system.get_service_info(category))
+  end
   case options[:output]
   when :yaml
     puts system_status.transform_values { |v| "#{v[:value]} #{v[:unit]}" }.to_yaml
@@ -59,6 +63,7 @@ if options[:system_id]
     puts JSON.pretty_generate(system_status.transform_values { |v| { val: v[:value], unit: v[:unit] } })
   when :prom
     puts "# System name: #{system.name} SystemID: #{options[:system_id]} Serial number: #{system.serial_number}"
+
     system_status.each do |(k, v)|
       labels = []
       labels << "instance_name=\"#{options[:prom_instance_name]}\"" if options[:prom_instance_name]

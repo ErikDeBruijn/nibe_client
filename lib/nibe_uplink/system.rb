@@ -9,19 +9,18 @@ module NibeUplink
 
     def get_status
       status = @client.system_status(@system["systemId"])
-      entries = {}
+      entries = []
       status.each do |heading|
-        heading["parameters"].each do |parameter|
-          # convert \u00B0C to °C
-          unit = parameter["unit"]
-          unit = unit.gsub(/\u00B0C/, "°C")
-          # heading_name = heading["title"].tr(".: -", "  _ ").strip.gsub(" ", "")
-          heading_name = heading["title"].downcase.gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
-          param_name = parameter["title"].gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
-          entries["#{heading_name}.#{param_name}"] = { value: parameter["displayValue"].to_f, unit: unit, designation: parameter["designation"] }
-        end
+        heading_name = heading["title"].downcase.gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
+        parameters = heading["parameters"]
+        entries += entries_from_params(heading_name, parameters)
       end
-      entries
+      entries.to_h
+    end
+
+    def get_service_info(category)
+      parameters = @client.system_service_info(@system["systemId"], category)
+      entries_from_params(category, parameters).to_h
     end
 
     def method_missing(symbol, *args)
@@ -29,6 +28,18 @@ module NibeUplink
       camelcase = symbol.to_s.gsub(/_([a-z])/) { Regexp.last_match(1).upcase }
 
       @system[camelcase] if @system.key?(camelcase)
+    end
+
+    private
+
+    def entries_from_params(heading_name, parameters)
+      parameters.map do |parameter|
+        # convert \u00B0C to °C
+        unit = parameter["unit"].gsub(/\u00B0C/, "°C")
+        param_name = parameter["title"].gsub(":", "").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
+        values = { value: parameter["displayValue"].to_f, unit: unit, designation: parameter["designation"] }
+        ["#{heading_name}.#{param_name}", values]
+      end
     end
 
   end

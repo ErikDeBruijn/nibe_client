@@ -28,6 +28,11 @@ module NibeUplink
       result
     end
 
+    def system_service_info(system_id, category)
+      result = perform_get("/api/v1/systems/#{system_id}/serviceinfo/categories/#{category}").body
+      result
+    end
+
     def token_file_data
       return nil if @token_was_updated == false
       raise TokenFileError, "Token file not set" if @token_file.nil?

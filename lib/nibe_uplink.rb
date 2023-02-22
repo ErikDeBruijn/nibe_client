@@ -1,6 +1,5 @@
 require "json"
 require "faraday"
-require "faraday_middleware"
 require "active_support/all"
 
 require_relative "nibe_uplink/version"

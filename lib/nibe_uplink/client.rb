@@ -91,18 +91,8 @@ module NibeUplink
       @connection ||= Faraday.new(url: "https://api.nibeuplink.com") do |conn|
         conn.adapter Faraday.default_adapter
         conn.request :json
-
-        conn.request :oauth2, @credentials.access_token, token_type: "bearer"
-        conn.request :retry,
-                     {
-                       max: 2,
-                       interval: 0.5,
-                       backoff_factor: 2,
-                       retry_statuses: [408, 409, 500, 501, 502, 503],
-                       methods: %i[get put post head options]
-                     }
+        conn.request :authorization, "Bearer", @credentials.access_token
         conn.response :json
-        conn.response :follow_redirects
         conn.response :raise_error
       end
     end

@@ -20,10 +20,10 @@ module NibeUplink
 
     def get_service_info(category)
       parameters = @client.system_service_info(@system["systemId"], category)
-      entries_from_params(category, parameters).to_h
+      to_h_with_suffix(entries_from_params(category, parameters))
     end
 
-    def method_missing(symbol, *args)
+    def method_missing(symbol, *_args)
       # underscore to camelcase: test_case -> testCase
       camelcase = symbol.to_s.gsub(/_([a-z])/) { Regexp.last_match(1).upcase }
 
@@ -31,6 +31,17 @@ module NibeUplink
     end
 
     private
+
+    def to_h_with_suffix(array)
+      hash = {}
+      counts = Hash.new(0)
+      array.each do |key, value|
+        counts[key] += 1
+        key = "#{key}-#{counts[key]}" if counts[key] > 1
+        hash[key] = value
+      end
+      hash
+    end
 
     def entries_from_params(heading_name, parameters)
       parameters.map do |parameter|
@@ -41,6 +52,5 @@ module NibeUplink
         ["#{heading_name}.#{param_name}", values]
       end
     end
-
   end
 end

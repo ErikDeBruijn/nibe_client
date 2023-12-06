@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative "../lib/include.rb"
-require 'optparse'
-require 'ostruct'
+require_relative "../lib/include"
+require "optparse"
+require "ostruct"
 options = OpenStruct.new(json: false, output: :yaml)
 
 def update_token_file(client)
@@ -14,7 +14,8 @@ end
 
 def get_niebe_client(token_file = "#{BASE_PATH}/.nibe-credentials.json")
   client_id, client_secret = get_client
-  nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id, client_secret: client_secret)
+  nibe_client = NibeUplink::Client.new(token_file: token_file, verbose: true, client_id: client_id,
+                                       client_secret: client_secret)
   nibe_client.credentials = NibeUplink::Credentials.load_from_file(token_file)
   nibe_client
 end
@@ -23,7 +24,7 @@ nibe_client = get_niebe_client
 systems = nil
 
 op = OptionParser.new do |opt|
-  opt.on('-s', '--system SYSTEMID', 'Select a system by SystemID') do |o|
+  opt.on("-s", "--system SYSTEMID", "Select a system by SystemID") do |o|
     systems = nibe_client.systems
     if systems.keys.exclude?(o.to_i)
       # to stderr:
@@ -33,11 +34,11 @@ op = OptionParser.new do |opt|
 
     options[:system_id] = o
   end
-  opt.on('-j', '--json', 'Output JSON') { options[:output] = :json }
-  opt.on('-y', '--yaml', 'Output YAML (default)') { options[:output] = :yaml }
-  opt.on('-p', '--prom', 'Output Prometheus format') { options[:output] = :prom }
-  opt.on('--instance-name NAME', 'Instance name in Prometheus output') { options[:prom_instance_name] = _1 }
-  opt.on('-l', '--list', 'List all systems') do
+  opt.on("-j", "--json", "Output JSON") { options[:output] = :json }
+  opt.on("-y", "--yaml", "Output YAML (default)") { options[:output] = :yaml }
+  opt.on("-p", "--prom", "Output Prometheus format") { options[:output] = :prom }
+  opt.on("--instance-name NAME", "Instance name in Prometheus output") { options[:prom_instance_name] = _1 }
+  opt.on("-l", "--list", "List all systems") do
     puts "Getting data for #{systems.count} systems:"
     nibe_client.systems.each do |(system_id, system)|
       puts "System name: #{system.name} SystemID: #{system_id}"
@@ -52,7 +53,8 @@ puts op.help if options[:system_id].nil?
 if options[:system_id]
   system = systems[options[:system_id].to_i]
   system_status = system.get_status
-  categories = %w[STATUS CPR_INFO_EP14 SYSTEM_1 PASSIVE_COOLING_INTERNAL ADDITION SMART_PRICE_ADAPTION AUX_IN_OUT SYSTEM_INFO]
+  categories = %w[STATUS CPR_INFO_EP14 SYSTEM_1 PASSIVE_COOLING_INTERNAL ADDITION SMART_PRICE_ADAPTION AUX_IN_OUT
+                  SYSTEM_INFO]
   categories.each do |category|
     system_status.merge!(system.get_service_info(category))
   end

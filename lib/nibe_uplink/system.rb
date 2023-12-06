@@ -11,7 +11,7 @@ module NibeUplink
       status = @client.system_status(@system["systemId"])
       entries = []
       status.each do |heading|
-        heading_name = heading["title"].downcase.gsub(":","").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
+        heading_name = heading["title"].downcase.gsub(":", "").gsub("-", "").gsub(".", "").strip.tr(" ", "_")
         parameters = heading["parameters"]
         entries += entries_from_params(heading_name, parameters)
       end

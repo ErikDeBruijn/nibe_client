@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require_relative "../lib/include.rb"
+require_relative "../lib/include"
 
-CREDENTIALS_FILE = ".nibe-credentials.json"
+CREDENTIALS_FILE = ".nibe-credentials.json".freeze
 
-client_id, client_secret = get_client()
+client_id, client_secret = get_client
 nibe_client = NibeUplink::Client.new(verbose: true, client_id: client_id, client_secret: client_secret)
 nibe_client_authorize_url = nibe_client.authorize_url(redirect_uri: redirect_uri)
 puts "==========================================="

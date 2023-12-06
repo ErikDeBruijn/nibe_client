@@ -10,7 +10,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Authorization" => "Bearer expired-token-1234",
+          "Authorization" => "Bearer expired-token-1234"
         }
       ).to_return(status: 401, body: "", headers: {})
 
@@ -28,7 +28,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Authorization" => "Bearer new-access-token-1234",
+          "Authorization" => "Bearer new-access-token-1234"
         }
       ).to_return(status: 200, body: { used_new_token: "true" }.to_json, headers: {})
     expect(client.systems).to eq({ "used_new_token" => "true" })
@@ -40,7 +40,7 @@ describe NibeUplink::Client do
     stub_request(:get, "https://api.nibeuplink.com/api/v1/systems")
       .with(
         headers: {
-          "Authorization" => "Bearer access_token-1234",
+          "Authorization" => "Bearer access_token-1234"
         }
       ).to_return(status: 200, body: { test: true }.to_json, headers: {})
     expect(client.systems["test"]).to be_truthy
@@ -112,7 +112,7 @@ describe NibeUplink::Client do
                   "redirect_uri" => "http://127.0.0.1:8000/oauth/callback",
                   "scopes" => "READSYSTEM" },
           headers: {
-            "Content-Type" => "application/x-www-form-urlencoded",
+            "Content-Type" => "application/x-www-form-urlencoded"
           }
         ).to_return(status: 200, body: expected_token, headers: { "Content-Type" => "application/json" })
 
@@ -137,7 +137,7 @@ describe NibeUplink::Client do
 
       server = WEBrick::HTTPServer.new(Port: 8000)
 
-      server.mount_proc("/") do |req, res|
+      server.mount_proc("/") do |req, _res|
         next unless req.path == "/oauth/callback"
 
         credentials = nibe_client.get_credentials(

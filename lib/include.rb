@@ -5,12 +5,12 @@
 BASE_PATH = File.dirname(File.dirname(__FILE__))
 $LOAD_PATH.unshift("#{BASE_PATH}/lib")
 
-require 'nibe_uplink'
-require 'webrick'
+require "nibe_uplink"
+require "webrick"
 
 def get_client
   file_name = "#{BASE_PATH}/.nibe-client.json"
-  return if !File.exist?(file_name)
+  return unless File.exist?(file_name)
 
   client_id_and_secret = JSON.parse(File.read(file_name))
   client_id = client_id_and_secret["client_id"]

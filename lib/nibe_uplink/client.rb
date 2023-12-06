@@ -9,7 +9,8 @@ module NibeUplink
     attr_reader :token_file
     attr_accessor :credentials
 
-    def initialize(client_id: nil, client_secret: nil, access_token: nil, refresh_token: nil, verbose: false, token_file: nil)
+    def initialize(client_id: nil, client_secret: nil, access_token: nil, refresh_token: nil, verbose: false,
+                   token_file: nil)
       @credentials = Credentials.new(access_token, Time.zone.now, refresh_token)
       @client_id = client_id
       @client_secret = client_secret
@@ -20,17 +21,15 @@ module NibeUplink
 
     def systems
       result = perform_get("/api/v1/systems").body
-      result['objects'].map { |system| [system["systemId"], System.new(self, system)] }.to_h
+      result["objects"].map { |system| [system["systemId"], System.new(self, system)] }.to_h
     end
 
     def system_status(system_id)
-      result = perform_get("/api/v1/systems/#{system_id}/status/system").body
-      result
+      perform_get("/api/v1/systems/#{system_id}/status/system").body
     end
 
     def system_service_info(system_id, category)
-      result = perform_get("/api/v1/systems/#{system_id}/serviceinfo/categories/#{category}").body
-      result
+      perform_get("/api/v1/systems/#{system_id}/serviceinfo/categories/#{category}").body
     end
 
     def token_file_data
@@ -48,7 +47,7 @@ module NibeUplink
         client_id: @client_id,
         scope: "READSYSTEM", # "READSYSTEM WRITESYSTEM"
         redirect_uri: redirect_uri,
-        state: ('a'..'z').to_a.sample(32).join
+        state: ("a".."z").to_a.sample(32).join
       }.to_query
       "#{API_BASE_URL}#{OAUTH2_ENDPOINT}?#{query}"
     end
@@ -66,7 +65,8 @@ module NibeUplink
       body = connection.post(
         "#{API_BASE_URL}#{TOKEN_ENDPOINT}",
         query,
-        { "Content-Type" => "application/x-www-form-urlencoded" }).body
+        { "Content-Type" => "application/x-www-form-urlencoded" }
+      ).body
 
       @credentials = Credentials.new(
         body["access_token"],

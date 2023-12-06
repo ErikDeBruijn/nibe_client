@@ -37,7 +37,7 @@ module NibeUplink
       counts = Hash.new(0)
       array.each do |key, value|
         counts[key] += 1
-        key = "#{key}-#{counts[key]}" if counts[key] > 1
+        key = "#{key}_#{counts[key]}" if counts[key] > 1
         hash[key] = value
       end
       hash

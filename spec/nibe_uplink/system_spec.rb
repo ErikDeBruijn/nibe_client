@@ -17,8 +17,8 @@ describe NibeUplink::System do
         "foo" => "2 V",
         "bar" => "1 degC",
         "current" => "1.5 A",
-        "current-2" => "0.5 A",
-        "current-3" => "2.5 A",
+        "current_2" => "0.5 A",
+        "current_3" => "2.5 A",
         "a" => "a a"
       }
 
